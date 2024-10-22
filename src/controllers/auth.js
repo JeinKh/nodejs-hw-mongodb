@@ -5,7 +5,8 @@ import { logoutUser } from '../services/auth.js';
 import { refreshUserSession } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
-  const user = await registerUser(req.body);
+  const { body } = req;
+  const user = await registerUser(body);
 
   res.status(200).json({
     status: 200,
@@ -15,7 +16,8 @@ export const registerUserController = async (req, res) => {
 };
 
 export const loginUserController = async (req, res) => {
-  const session = await loginUser(req.body);
+  const { body } = req;
+  const session = await loginUser(body);
 
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
@@ -35,17 +37,6 @@ export const loginUserController = async (req, res) => {
   });
 };
 
-export const logoutUserController = async (req, res) => {
-  if (req.cookies.sessionId) {
-    await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
-  }
-
-  res.clearCookie('sessionId');
-  res.clearCookie('refreshToken');
-
-  res.status(204).send();
-};
-
 const setupSession = (res, session) => {
   res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true,
@@ -57,14 +48,25 @@ const setupSession = (res, session) => {
   });
 };
 
-export const refreshUserSessionController = async (req, res) => {
-  const { sessionId, refreshToken } = req.cookies;
-  if (!sessionId || !refreshToken) {
-    return res.status(400).json({
-      status: 400,
-      message: 'Session not found',
-    });
+export const logoutUserController = async (req, res) => {
+  if (req.cookies.sessionId) {
+    await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
   }
+
+  res.clearCookie('sessionId');
+  res.clearCookie('refreshToken');
+
+  res.status(204).send();
+};
+
+export const refreshUserSessionController = async (req, res) => {
+  // const { sessionId, refreshToken } = req.cookies;
+  // if (!sessionId || !refreshToken) {
+  //   return res.status(400).json({
+  //     status: 400,
+  //     message: 'Session not found',
+  //   });
+  // }
   const session = await refreshUserSession({
     sessionId: req.cookies.sessionId,
     refreshToken: req.cookies.refreshToken,
