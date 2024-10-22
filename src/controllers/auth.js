@@ -1,18 +1,16 @@
+import { registerUser } from '../services/auth.js';
+import { loginUser } from '../services/auth.js';
 import { ONE_DAY } from '../constants/index.js';
-import {
-  loginUser,
-  logoutUser,
-  refreshUsersSession,
-  registerUser,
-} from '../services/auth.js';
+import { logoutUser } from '../services/auth.js';
+import { refreshUserSession } from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
 
-  res.status(201).json({
-    status: 201,
+  res.status(200).json({
+    status: 200,
     message: 'Successfully registered a user!',
-    data: user,
+    data: { user },
   });
 };
 
@@ -23,7 +21,6 @@ export const loginUserController = async (req, res) => {
     httpOnly: true,
     expires: new Date(Date.now() + ONE_DAY),
   });
-
   res.cookie('sessionId', session._id, {
     httpOnly: true,
     expires: new Date(Date.now() + ONE_DAY),
@@ -40,7 +37,7 @@ export const loginUserController = async (req, res) => {
 
 export const logoutUserController = async (req, res) => {
   if (req.cookies.sessionId) {
-    await logoutUser(req.cookies.sessionId);
+    await logoutUser(req.cookies.sessionId, req.cookies.refreshToken);
   }
 
   res.clearCookie('sessionId');
@@ -68,7 +65,7 @@ export const refreshUserSessionController = async (req, res) => {
       message: 'Session not found',
     });
   }
-  const session = await refreshUsersSession({
+  const session = await refreshUserSession({
     sessionId: req.cookies.sessionId,
     refreshToken: req.cookies.refreshToken,
   });
