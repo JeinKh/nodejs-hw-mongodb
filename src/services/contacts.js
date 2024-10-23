@@ -7,11 +7,12 @@ export const getAllContacts = async ({
   perPage = 10,
   sortOrder = SORT_ORDER.ASC,
   sortBy = '_id',
+  userId,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactsQuery = ContactsCollection.find();
+  const contactsQuery = ContactsCollection.find({ userId });
   const contactsCount = await ContactsCollection.find()
     .merge(contactsQuery)
     .countDocuments();
@@ -31,7 +32,7 @@ export const getAllContacts = async ({
 };
 
 export const getContactById = async (contactId, userId) => {
-  const contact = await ContactsCollection.findById({ _id: contactId, userId });
+  const contact = await ContactsCollection.findOne({ _id: contactId, userId });
   return contact;
 };
 
