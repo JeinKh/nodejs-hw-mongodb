@@ -79,11 +79,14 @@ export const patchStudentController = async (req, res, next) => {
       photoUrl = await saveFileToUploadDir(photo);
     }
   }
-  const result = await updateContact(contactId, {
-    ...req.body,
-    photo: photoUrl,
+  const result = await updateContact(
+    contactId,
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
     userId,
-  });
+  );
 
   if (!result) {
     next(createHttpError(404, 'Contact not found'));
