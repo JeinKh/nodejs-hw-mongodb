@@ -14,7 +14,7 @@ tags:
 servers:
   - url: http://127.0.0.1:3000
   - url: https://nodejs-hw-mongodb-9-ebie.onrender.com
-
+paths:
   /contacts/{id}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
