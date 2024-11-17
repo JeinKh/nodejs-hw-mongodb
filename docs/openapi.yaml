@@ -13,7 +13,7 @@ tags:
     description: Auth operations.
 servers:
   - url: http://127.0.0.1:3000
-  - url: https://nodejs-hw-mongodb-8-dku1.onrender.com
+
   /contacts/{id}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
